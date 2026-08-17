@@ -1,9 +1,9 @@
 name: test_workflow
 on: 
-  pull_request:
-    types:
-      - opened
-  workflow_dispatch:
+  push:
+    branches:
+      - master
+    
 
 jobs:
   test:
