@@ -14,3 +14,17 @@ jobs:
         run: pip install -r requirements.txt
       - name: run first test case 
         run: pytest tests/test_data_quality.py -v 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download code
+        uses: actions/checkout@v7
+      - name: install python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: install requirements
+        run: pip install -r requirements.txt
+      - name: print deploy
+        run: echo "done deploying"
+   
