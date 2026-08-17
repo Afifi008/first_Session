@@ -1,10 +1,5 @@
 name: test_workflow
-on: 
-  push:
-    branches:
-      - dev
-    paths:
-      - '.github/workflows/*'
+on: push
     
 jobs:
   test:
