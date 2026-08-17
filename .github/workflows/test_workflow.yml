@@ -40,7 +40,7 @@ jobs:
           path: artifact/*.csv
 
   deploy:
-    needs: test
+    needs: [test,build]
     runs-on: ubuntu-latest
     steps:
       - name: download code
@@ -51,6 +51,15 @@ jobs:
           python-version: '3.11'
       - name: install requirements
         run: pip install -r requirements.txt
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts_files_generated
+          path: data/
+      - name: list file
+        run: |
+          cd data/ 
+          ls
       - name: print deploy
         run: echo "done deploying"
    
