@@ -15,6 +15,7 @@ jobs:
       - name: run first test case 
         run: pytest tests/test_data_quality.py -v 
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: download code
