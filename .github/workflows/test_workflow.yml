@@ -15,7 +15,7 @@ jobs:
       - name: install python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: install requirements
         run: pip install -r requirements.txt
       - name: run first test case 
