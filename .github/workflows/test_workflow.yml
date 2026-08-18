@@ -10,7 +10,7 @@ jobs:
       - name: install python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: cache requirements
         uses: actions/cache@v4
         with:
