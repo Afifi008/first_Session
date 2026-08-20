@@ -18,16 +18,10 @@ jobs:
       - name: install reiquirments
         run: pip install -r requirements.txt
       - name: run test data 
-        continue-on-error: true
         id: test_data_quality
         run: pytest tests/test_data_quality.py
-      - name: conclusion
-        if: steps.test_data_quality.conclusion == 'failure'
-        run: echo "conclusion is ${{steps.test_data_quality.conclusion}}"
-      - name: outcome
-        if: steps.test_data_quality.outcome == 'failure'
-        run: echo "outcome is ${{steps.test_data_quality.outcome}}"
       - name: print failuer message
+        if: steps.test_data_quality.outcome == 'failuer'
         run: echo "Data Quality step has failed"
       - name: generate artifact
         run: python build_output.py
@@ -38,12 +32,3 @@ jobs:
           path: |
             data/clean_sales.csv
             data/sales_by_category.csv
-  # report:
-  #   needs: test
-  #   if: failure()
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: print metadata
-  #       run: |
-  #         echo "test job has failed"
-  #         echo "${{toJson(github)}}"
