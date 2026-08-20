@@ -14,9 +14,6 @@ CLEAN_PATH = PROJECT_ROOT / "data" / "clean_sales.csv"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "sales_by_category.csv"
 
 
-# -------------------------------------------------------------------
-# Task functions (plain Python — easy to unit-test)
-# -------------------------------------------------------------------
 def extract() -> None:
     """Read the raw CSV and pass it forward unchanged."""
     df = pd.read_csv(RAW_PATH)
@@ -30,7 +27,6 @@ def transform() -> None:
     # Drop rows missing critical fields
     df = df.dropna(subset=["customer_id", "product_category", "revenue"])
 
-    # Revenue must be non-negative — bad data is dropped, not silently kept
     df = df[df["revenue"] >= 0]
 
     df.to_csv(CLEAN_PATH, index=False)
@@ -47,7 +43,6 @@ def transform() -> None:
 
 
 def load() -> None:
-    """In a real pipeline, push to a warehouse. Here, we just confirm the file."""
     if not OUTPUT_PATH.exists():
         raise FileNotFoundError(f"Expected {OUTPUT_PATH} to exist after transform")
     df = pd.read_csv(OUTPUT_PATH)
@@ -60,7 +55,7 @@ def load() -> None:
 default_args = {
     "owner": "data-team",
     "depends_on_past": False,
-    "retries": 4,
+    "retries": 2,
     "retry_delay": timedelta(minutes=5),
 }
 

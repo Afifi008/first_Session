@@ -1,20 +1,25 @@
 name: test_workflow
 on: push
+env:
+  MONGO_HOST: cluster0.8rvrqc3.mongodb.net
+  MONGO_DB: 'DataCraft_DB'
+  MONGO_USER: ${{secrets.MONGO_USER}}
+  MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}}
 jobs:
   test:
+    uses: ./.github/workflows/reusable.yml
+    with:
+      python_version: '3.12'
+      test_case: 'tests/test_data_quality.py'
+  show_results:
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: download code
-        uses: actions/checkout@v7
-      - name: install python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-      - name: install requirements
-        run: pip install -r requirements.txt
-      - name: run first test case 
-        run: pytest tests/test_data_quality.py -v 
-  deploy:
+      - name: show result
+        run: |
+          echo "test status = ${{needs.test.outputs.test_status}}"
+          echo "Number of rows= ${{needs.test.outputs.row_count}}"
+  build:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -24,8 +29,49 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - name: cache requirements
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: cache-${{hashFiles('requirements.txt')}}
       - name: install requirements
         run: pip install -r requirements.txt
+      - name: run build script
+        run: python build_output.py
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts_files_generated
+          path: artifact/*.csv
+
+  deploy:
+    needs: [test,build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: download code
+        uses: actions/checkout@v7
+      - name: install python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: cache requirements
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: cache-${{hashFiles('requirements.txt')}}
+      - name: install requirements
+        run: pip install -r requirements.txt
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts_files_generated
+          path: data/
+      - name: list file
+        run: |
+          cd data/ 
+          ls
+      - name: run deploy script
+        run: python deploy_to_mongo.py
       - name: print deploy
         run: echo "done deploying"
    

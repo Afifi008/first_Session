@@ -1,0 +1,42 @@
+name: test_Workflow
+on: 
+  workflow_call:
+    inputs:
+      python_version:
+        type: string
+      test_case:
+        type: string 
+    outputs:
+      test_status:
+        value: ${{jobs.test_reusable.outputs.test_outcome}}
+      row_count:
+        value: ${{jobs.test_reusable.outputs.Num_of_rows}}
+
+jobs:
+  test_reusable:
+    outputs:
+      test_outcome: ${{steps.test_case.outcome}}
+      Num_of_rows: ${{steps.count.outputs.row}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: download code
+        uses: actions/checkout@v7
+      - name: install python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{inputs.python_version}}
+      - name: cache requirements
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: cache-${{hashFiles('requirements.txt')}}
+      - name: install requirements
+        run: pip install -r requirements.txt
+      - name: run first test case
+        id: test_case
+        run: pytest ${{inputs.test_case}} -v 
+      - name: count rows
+        id: count
+        run: |
+          ROWS=$(wc -l < data/raw_sales.csv)
+          echo "row=$ROWS" >> $GITHUB_OUTPUT
