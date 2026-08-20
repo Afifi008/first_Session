@@ -32,3 +32,11 @@ jobs:
           path: |
             data/clean_sales.csv
             data/sales_by_category.csv
+  report:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: print meta data
+        run: |
+          echo "Test job failed"
+          echo "${{toJson(github)}}"
