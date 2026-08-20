@@ -4,8 +4,10 @@ on:
     inputs:
       python_version:
         type: string
+        required: true
       test_case:
         type: string 
+        
 jobs:
   test_reusable:
     runs-on: ubuntu-latest
