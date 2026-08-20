@@ -21,6 +21,12 @@ jobs:
         continue-on-error: true
         id: test_data_quality
         run: pytest tests/test_data_quality.py
+      - name: outcome
+        if: steps.test_data_quality.outcome == 'failure'
+        run: echo "Outcome is failure"
+      - name: conclusion
+        if: steps.test_data_quality.conclusion == 'failure'
+        run: echo "conclusion is failure"
       - name: print failuer message
         run: echo "Data Quality step has failed"
       - name: generate artifact
