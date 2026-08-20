@@ -5,9 +5,10 @@ on:
       python_version:
         type: string
         required: true
+        default: '3.11'
       test_case:
         type: string 
-        
+
 jobs:
   test_reusable:
     runs-on: ubuntu-latest
