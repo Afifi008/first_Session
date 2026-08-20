@@ -1,7 +1,4 @@
-"""
-DAG integrity tests — no Airflow import needed.
-We parse the DAG file using Python's ast module so this runs on Windows too.
-"""
+
 
 from __future__ import annotations
 
