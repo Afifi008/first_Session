@@ -11,6 +11,14 @@ jobs:
     with:
       python_version: '3.12'
       test_case: 'tests/test_data_quality.py'
+  show_results:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: show result
+        run: |
+          echo "test status = ${{needs.test.outputs.test_status}}"
+          echo "Number of rows= ${{needs.test.outputs.row_count}}"
   build:
     needs: test
     runs-on: ubuntu-latest
